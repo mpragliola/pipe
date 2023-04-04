@@ -11,8 +11,8 @@ func Reduce[In, Out any](fn ReduceFunc[In, Out], init Out, in <-chan In) <-chan 
 		acc := init
 		for x := range in {
 			acc = fn(acc, x)
+			out <- acc
 		}
-		out <- acc
 	}()
 
 	return out
