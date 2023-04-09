@@ -117,6 +117,12 @@ for r := range pipe.Pipe(stringify(pipe.Pipe(add10, pipe.Pipe(square, emit))) {
 // "19"
 ```
 
+Use `pipe.P` as a shorthand alias for `pipe.Pipe`:
+
+```go
+p := pipe.p(fn, otherPipe)
+```
+
 ### Filter
 
 ```go
@@ -131,3 +137,25 @@ for r := range pipe.Filter(oddFilter, pipe.Of(input...)) {
 \\ 4
 \\ 6
 ```
+
+### Parallel
+
+Spreads a computation among `n` workers for parallel processing.
+
+```go
+start := pipe.Of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+work := func(i int) int {
+    s := time.Duration(i*500) * time.Millisecond
+    fmt.Println("... process item", i, "for", s, "seconds")
+    time.Sleep(s)
+
+    return i
+}
+parallel := pipe.Parallel(4, work, start)
+
+for r := range parallel {
+    fmt.Println("->", r)
+}
+```
+
+You can use `pipe.L` as a shorthand alias for `pipe.Parallel`.
